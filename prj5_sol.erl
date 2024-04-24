@@ -14,11 +14,11 @@
 % -if(false).  
 -define(test_rec_poly_eval, enabled).
 -define(test_non_rec_poly_eval, enabled).
--define(test_tuple_poly_eval, enabled).
+%-define(test_tuple_poly_eval, enabled).
 -define(test_assoc_lookup, enabled).
--define(test_id_poly_eval, enabled).
--define(test_server_fn, enabled).
-% -endif.
+% -define(test_id_poly_eval, enabled).
+% -define(test_server_fn, enabled).
+% % -endif.
 
 
 %----------------------- Recursive Polynomial Eval ----------------------
@@ -35,8 +35,13 @@
 %
 % *Restriction*: Your implementation is required to be tail-recursive.
 % *Hint*: Use an auxiliary function.
-rec_poly_eval(_Coeffs, _X) ->
-    'TODO'.
+rec_poly_eval(Coeffs, X) ->
+    rec_poly_eval(Coeffs, X, 0, 0).
+
+rec_poly_eval([], _X, _Power, Result) ->
+    Result;
+rec_poly_eval([Coeff | Rest], X, Power, Result) ->
+    rec_poly_eval(Rest, X, Power + 1, Result + Coeff * math:pow(X, Power)).
 
 
 -ifdef(test_rec_poly_eval).
@@ -67,8 +72,8 @@ rec_poly_eval_test_() -> [
 % *Hint*: Use a list comprehension to compute the terms of the
 % polynomial (using list:zip, list:seq() and math:pow())
 % followed by a lists:foldl() to sum the terms.
-non_rec_poly_eval(_Coeffs, _X) ->
-    'TODO'.
+non_rec_poly_eval(Coeffs, X) ->
+    lists:sum([Coeff * math:pow(X, Index) || {Coeff, Index} <- lists:zip(Coeffs, lists:seq(0, length(Coeffs) - 1))]).
 
 
 -ifdef(test_non_rec_poly_eval).
@@ -100,8 +105,6 @@ non_rec_poly_eval_test_() -> [
 % and then call any one of the solutions to the two previous exercises.
 tuple_poly_eval(_TupleCoeffs, _X) ->
     'TODO'.
-
-
 -ifdef(test_tuple_poly_eval).
 tuple_poly_eval_test_() -> [
   { "poly_empty", ?_assert(tuple_poly_eval([], 2) == 0) },
@@ -128,16 +131,18 @@ tuple_poly_eval_test_() -> [
 %
 % Hint: implement by wrapping lists:keyfind() and using a case
 % to pattern-match on the result.
-assoc_lookup(_Key, _Assoc, _DefaultFn) ->
-    'TODO'.
-    
+assoc_lookup(_Key, Assoc, DefaultFn) ->
+    case lists:keyfind(_Key, 1, Assoc) of
+        {_, Value} -> Value;
+        false -> DefaultFn()
+    end.
 
 % Lookup the Value of Key in assoc list Assoc list containing
 % { Key, Value } pairs.  If not found, return 0.
 %
 % Hint: wrap assoc_lookup.
-assoc_lookup_0(_Key, _Assoc) ->
-    'TODO'.
+assoc_lookup_0(Key, Assoc) ->
+    assoc_lookup(Key, Assoc, fun() -> 0 end).
 				     
 % Lookup the Value of Key in assoc list Assoc list containing
 % { Key, Value } pairs.  If not found, throw an exception
@@ -146,8 +151,11 @@ assoc_lookup_0(_Key, _Assoc) ->
 % format("key ~p not found", [Key]) ).
 %
 % Hint: wrap assoc_lookup.
-assoc_lookup_throw(_Key, _Assoc) ->
-    'TODO'.
+assoc_lookup_throw(Key, Assoc) ->
+    Msg = io_lib:format("key ~p not found", [Key]),
+    case assoc_lookup(Key, Assoc, fun() -> throw({not_found, Msg}) end) of
+        Value -> Value
+    end.
 
 -ifdef(test_assoc_lookup).
 assoc_lookup_test_() -> 
