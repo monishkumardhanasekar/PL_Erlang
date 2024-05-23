@@ -1,6 +1,11 @@
-Name:		Monish Kumar Dhanasekar
-B-Number:	B01025975
-Email:		mdhanasekar@binghamton.edu
+Project Overview
+This project aims to provide us the exposure to recursive programming, higher-order functions, and list comprehensions, while also introducing them to the Erlang programming language. By implementing specified functions in Erlang, students gain practical experience in applying recursive techniques and functional programming concepts to solve various problems.
 
-Add text here as needed to document the status of your project.
+The functions are:
 
+1. rec_poly_eval: This function evaluates a polynomial recursively.
+2. non_rec_poly_eval: This function evaluates a polynomial non-recursively.
+3. tuple_poly_eval: This function evaluates a polynomial using tuples.
+4. assoc_lookup: This function performs a lookup in an association list.
+5. id_poly_eval: This function evaluates a polynomial using higher-order functions.
+6. server_fn: This function represents a server function, which could perform various tasks in a server application.
